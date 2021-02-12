@@ -40,11 +40,23 @@ class CORE
             require_once $file;
             $_ENV["CURRENT"] = CORE::$request_url[0];
 
+            if(!class_exists(CORE::$request_url[0]))
+            {
+                CORE::ERROR("Not found", 404, "Could not find controller class: " . CORE::$request_url[0]);
+                return;
+            }
+            
             // Create an instance of the controller class
             $controller_instance = new CORE::$request_url[0]();
 
             // Get contoller method
             $controller_method = CORE::$request_url[1];
+
+            if(!method_exists($controller_instance, $controller_method))
+            {
+                CORE::ERROR("Not found", 404, "Could not find controller method: " . $controller_method);
+                return;
+            }
             
             // Check if we have a controller method
             if($controller_method == '')  $controller_method = "index";
@@ -78,6 +90,31 @@ class CORE
         include(ROOT . "/View/".$_ENV["CURRENT"]."/$file.php");
         include(ROOT . "/View/footer.php");
     }
+    /**
+     * Loads a html page
+     * @param string $file Name of the page to view
+     * @param string $title Page title
+     * @param array $args Arguments to give to the page
+     */
+    public static function APP_VIEW($file, $title, $args = null)
+    {
+        // Extract the variables to a local namespace
+        if(!empty($args)) extract($args);
+
+        // Set title
+        ob_start();
+        include(ROOT . "/View/header.php");
+        $buffer=ob_get_contents();
+        ob_end_clean();
+
+        $buffer=str_replace("%TITLE%", $title, $buffer);
+        echo $buffer;
+
+        // Include the files
+        include(CONFIG["filesystem"] . "SYSTEM/APPS/" . $_ENV["CURRENT"] . "/View/$file.php");
+        include(ROOT . "/View/footer.php");
+    }
+
     /**
      * Loads an error page
      * @param string $type Type of error. Like 'Not found'
