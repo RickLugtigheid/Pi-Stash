@@ -57,7 +57,13 @@ html, body, svg {
 <div id="desktop">
     <?php if($_SESSION["perms"] >= 4) { ?> <a title="Admin console" href="/<?=$_ENV["BASENAME"]?>/admin/config" class="app t-big" style="color: rgb(3, 0, 194);"><i class="fas fa-user-cog"></i></a> <?php }?>
     <a title="File Browser" href="/<?=$_ENV["BASENAME"]?>/filesystem/browse" class="app t-big" style="color: rgb(253, 214, 107);"><i class="far fa-folder-open"></i></a>
-    <?php //foreach($apps as $app){ ?>
-        <!-- <a title="<?=$app["name"]?>" href="/<?=$_ENV["BASENAME"]?>/<?=$app["path"]?>/index" class="app t-big" style="color: rgb(<?=$app["icon-color"]?>);"><i class="<?=$app["icon"]?>"></i></a> -->
-    <?php //} ?>
+    <?php foreach($icons as $icon)
+    { 
+        switch($icon["icon_type"])
+        {
+            case "element":?>
+                <a title="<?=$icon["displayname"]?>" href="/<?=$_ENV["BASENAME"]?>/<?=$icon["name"]?>/<?=$icon["start_page"]?>" class="app t-big"><i class="<?=$icon["icon_content"]?>"></i></a>     
+            <?php break;
+        }
+    } ?>
 </div>
