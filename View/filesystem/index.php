@@ -59,7 +59,7 @@
                 if($file["name"] == "SYSTEM" && $isAdmin == true/* $isAdmin for testing */) return; 
                 switch(strtolower($file["ext"])){
                     case 'txt': 
-                    ?><a class="icon" href="/<?=$_ENV["BASENAME"]?>/filesystem/showFile/<?=$curent?>/<?=$file["name"]?>"><i class="far fa-file-alt"></i></a><?php
+                    ?><a class="icon" href="/<?=$_ENV["BASENAME"]?>/filesystem/edit/<?=$curent?>/<?=$file["name"]?>"><i class="far fa-file-alt"></i></a><?php
                         break;
                     case 'html': 
                         ?><a class="icon" href="/<?=$_ENV["BASENAME"]?>/filesystem/showfile/<?=$curent?>/<?=$file["name"]?>"><i class="far fa-file-code"></i></a><?php
@@ -74,7 +74,7 @@
                     case 'json': 
                     case 'php': 
                     case 'sql': 
-                    ?><a class="icon" href="/<?=$_ENV["BASENAME"]?>/filesystem/textEditor/<?=$curent?>/<?=$file["name"]?>"><i class="far fa-file-code"></i></a><?php
+                    ?><a class="icon" href="/<?=$_ENV["BASENAME"]?>/filesystem/edit/<?=$curent?>/<?=$file["name"]?>"><i class="far fa-file-code"></i></a><?php
                         break;
                     case 'pdf': 
                     ?><a class="icon" href="/<?=$_ENV["BASENAME"]?>/filesystem/showfile/<?=$curent?>/<?=$file["name"]?>"><i class="far fa-file-pdf"></i></a><?php
@@ -121,18 +121,18 @@
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <!-- File -->
                             <?php if($file["ext"] != null) { ?>
-                            <a class="dropdown-item"  href="/<?=$_ENV["BASENAME"]?>/filesystem/textEditor/<?=$curent?>/<?=$file["name"]?>"><i class="fas fa-edit"></i>Edit</a>
+                            <a class="dropdown-item"  href="/<?=$_ENV["BASENAME"]?>/filesystem/edit/<?=$curent?>/<?=$file["name"]?>"><i class="fas fa-edit"></i>Edit</a>
+                            <a class="dropdown-item" href="/<?=$_ENV["BASENAME"]?>/filesystem/download/<?=$curent?>/<?=$file["name"]?>"><i class="fas fa-download">Download</i></a>
                             <?php } ?>
                         
-                            <a class="dropdown-item" href="/<?=$_ENV["BASENAME"]?>/filesystem/delete/<?=$curent?>/<?=$file["name"]?>"><i class="fas fa-trash-alt"></i>Remove</a>
+                            <a class="dropdown-item" href="/<?=$_ENV["BASENAME"]?>/filesystem/delete/<?=$curent?>/<?=$file["name"]?>?path=<?=$curent?>/<?=$file["name"]?>"><i class="fas fa-trash-alt"></i>Remove</a>
                             <a class="dropdown-item" onclick="let nName = prompt('New name: '); location.replace(`/<?=$_ENV["BASENAME"]?>/filesystem/rename/<?=$curent?>/<?=$file["name"]?>/${nName}`);"><i class="fas fa-edit"></i>Rename</a>
                         
                             <?php if($file["ext"] == null) { ?>
-                                <a class="dropdown-item" href="/<?=$_ENV["BASENAME"]?>/filesystem/zip/<?=$curent?>/<?=$file["name"]?>"><i class="far fa-file-archive">Zip</i></a>
+                                <!-- <a class="dropdown-item" href="/<?=$_ENV["BASENAME"]?>/filesystem/zip/<?=$curent?>/<?=$file["name"]?>"><i class="far fa-file-archive">Zip</i></a> -->
                             <?php } else if($file["ext"] == "zip" || $file["ext"] == "rar") {?>
-                                <a class="dropdown-item" href="/<?=$_ENV["BASENAME"]?>/filesystem/unzip/<?=$curent?>/<?=$file["name"]?>"><i class="far fa-file-archive">Unzip</i></a>
+                                <!-- <a class="dropdown-item" href="/<?=$_ENV["BASENAME"]?>/filesystem/unzip/<?=$curent?>/<?=$file["name"]?>"><i class="far fa-file-archive">Unzip</i></a> -->
                         <?php } ?>
-                            <a class="dropdown-item" href="/<?=$_ENV["BASENAME"]?>/filesystem/download/<?=$curent?>/<?=$file["name"]?>"><i class="fas fa-download">Download</i></a>
                     </div>
             <?php } ?>
         </div>

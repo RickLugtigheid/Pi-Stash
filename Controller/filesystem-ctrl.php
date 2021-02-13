@@ -42,7 +42,7 @@ class filesystem
             readfile($file);
             exit;
         }
-        else ERROR("Not Found", 404, "Could not find file '$file' to download");
+        else CORE::ERROR("Not Found", 404, "Could not find file '$file' to download");
     }
     public function createfile($args)
     {
@@ -67,8 +67,11 @@ class filesystem
             }
         }
 
-        // Go back
-        header("Location: /". $_ENV["BASENAME"] ."/filesystem/browse/" . implode("\\", $args));
+        // Go back to the correct page
+        $location = $_GET["loc"];
+        var_dump($location);
+        if($location == '') header("Location: /". $_ENV["BASENAME"] ."/filesystem/browse/" . implode("\\", $args));
+        else header("Location: /". $_ENV["BASENAME"] . $location . implode("\\", $args) . "\\$filename");
     }
     public function createdir($args)
     {
@@ -93,8 +96,8 @@ class filesystem
         // Get the path of the file/folder we want to rename
         $path = CONFIG["filesystem"] . str_replace('%20', ' ', implode('\\', $args));
 
-        // Check if we aren't trying to rename folders that we need
-        if(($oldName == "FILES" || $oldName == "SYSTEM") || ($newName == "FILES" || $newName == "SYSTEM")) CORE::ERROR("Could not rename file", 409, "Rule 'Dont rename to or form SYSTEM or FILES' was triggerd");
+        // Check if we aren't trying to rename a static folder
+        if(filesystem::IsStatic($oldName) || filesystem::IsStatic($newName)) CORE::ERROR("Could not rename file", 409, "Could not rename static folder/file");
         else
         {
             // Get the extension of the old file/folder
@@ -115,11 +118,18 @@ class filesystem
     {
         // Get the file we want to delete
         $target = CONFIG["filesystem"] . str_replace('%20', ' ', implode('\\', $args));
-        //$target = "..\_DIR" . $_POST["path"];
+
         array_pop($args); // Remove this file from the header path
     
+        // Make sure we can't delete a static folder/file
+        if(filesystem::IsStatic($_GET["path"]))
+        {
+            CORE::ERROR("Could not delete file/folder", 409, "Could not delete static folder/file");
+            return;
+        }
+
         // When the target is a directory we check if we can remove it
-        if(is_dir($target) && $_POST["path"] != "FILES" && $_POST["path"] != "SYSTEM"){
+        if(is_dir($target)){
             rmdir($target);
         }
         // If the target is a file we unlike it
@@ -157,20 +167,20 @@ class filesystem
         
         // (C) UPLOAD DESTINATION
         // ! CHANGE FOLDER IF REQUIRED !
-        $filePath = CONFIG["filesystem"] . str_replace('%20', ' ', implode('\\', $args));
+        $filepath = CONFIG["filesystem"] . str_replace('%20', ' ', implode('\\', $args));
         
-        if (!file_exists($filePath)) { 
-            if (!mkdir($filePath, 0777, true)) {
-                verbose(0, "Failed to create $filePath");
+        if (!file_exists($filepath)) { 
+            if (!mkdir($filepath, 0777, true)) {
+                verbose(0, "Failed to create $filepath");
             }
         }
         $fileName = isset($_REQUEST["name"]) ? $_REQUEST["name"] : $_FILES["file"]["name"];
-        $filePath = $filePath . "\\" . $fileName;
+        $filepath = $filepath . "\\" . $fileName;
             
         // (D) DEAL WITH CHUNKS
         $chunk = isset($_REQUEST["chunk"]) ? intval($_REQUEST["chunk"]) : 0;
         $chunks = isset($_REQUEST["chunks"]) ? intval($_REQUEST["chunks"]) : 0;
-        $out = @fopen("{$filePath}.part", $chunk == 0 ? "wb" : "ab");
+        $out = @fopen("{$filepath}.part", $chunk == 0 ? "wb" : "ab");
         if ($out) {
             $in = @fopen($_FILES['file']['tmp_name'], "rb");
             if ($in) {
@@ -187,8 +197,53 @@ class filesystem
         
         // (E) CHECK IF FILE HAS BEEN UPLOADED
         if (!$chunks || $chunk == $chunks - 1) {
-            rename("{$filePath}.part", $filePath);
+            rename("{$filepath}.part", $filepath);
         }
         verbose(1, "Upload OK");
+    }
+
+
+    // [Text Editor]
+    public function edit($args)
+    {
+        // Get the file path
+        $filepath = CONFIG["filesystem"] . str_replace('%20', ' ', implode('\\', $args));
+        
+        // Check if the file exists
+        if(!file_exists($filepath))
+        {
+            CORE::ERROR("Not found", 404, "Could not find file: " . $filepath);
+            return;
+        }
+
+        $type = mime_content_type($filepath);
+        if($type == 'inode/x-empty') $type = pathinfo($filepath, PATHINFO_EXTENSION);
+
+        CORE::VIEW("textEditor", "Text Editor", array("curent" => str_replace('%20', ' ', implode('\\', array_slice($args, 0, -1, true))), "contents" => htmlspecialchars(file_get_contents($filepath)), "type" => $type, "name" => array_pop($args)));
+    }
+    public function save($args)
+    {
+        // Get the file path
+        $filepath = CONFIG["filesystem"] . str_replace('%20', ' ', implode('\\', $args));
+
+        // Get the new file contents
+        $newContents = $_POST["newContents"];
+
+        // Put the new contents in the file
+        file_put_contents($filepath, $newContents);
+
+        // Go back
+        header("Location: /". $_ENV["BASENAME"] . $_GET["loc"] . implode("\\", $args));
+    }
+
+    // Misc
+    public static function IsStatic($path)
+    {
+        foreach(CONFIG["static_paths"] as $static)
+        {
+            if($path == $static) return true;
+            else if($path == "/$static") return true;
+        }
+        return false;
     }
 }

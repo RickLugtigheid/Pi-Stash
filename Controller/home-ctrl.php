@@ -26,8 +26,4 @@ class home
         // View the index page
         CORE::VIEW("index", "Home", array("icons" => $icons));
     }
-    public function argTest($args)
-    {
-        var_dump($args);
-    }
 }
