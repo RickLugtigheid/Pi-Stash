@@ -10,6 +10,8 @@
     }
     .drop{
         font-size: 1.5em;
+        color: black;
+        text-decoration: none;
     }
     .icon{
         color: black;

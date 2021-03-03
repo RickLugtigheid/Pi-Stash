@@ -18,7 +18,7 @@ $config["static_paths"] = ["SYSTEM", "SYSTEM/APPS", "FILES"];
 // SQL DATABASE
 // ----------------------------------
 // Configuration to login to the database
-$config["default_database"] = "";
+$config["default_database"] = "Pi-Stash";
 $config["database_host"] = "127.0.0.1";
 $config["database_user"] = "root";
 $config["database_password"] = "mysql";

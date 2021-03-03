@@ -1,9 +1,25 @@
 <?php
+// Load the plugin file
+require_once ROOT . "/Framework/plugins.php";
+
+// Get the folder name
 $_ENV["BASENAME"] = basename(dirname(__DIR__));
 
 // Get the request URL
 CORE::$request_url = isset($_SERVER['PATH_INFO']) ? explode('/', $_SERVER['PATH_INFO']) : null;
 if(isset(CORE::$request_url)) array_shift(CORE::$request_url);
+
+// Check if we are loged in
+session_start();
+// Check if a user is logedin
+if((CORE::$request_url[1] != "login") && !isset($_SESSION["userID"]))
+{
+    // If not we send them to the login page
+    $_ENV["CURRENT"] = "home";
+    CORE::VIEW("login", "Login", array("users" => SQL::Execute("SELECT * FROM USERS"), "path" => $_SERVER['PATH_INFO'],
+    "headers" => array('<link rel="stylesheet" href="/' . $_ENV["BASENAME"] . '/public/assets/css/desktop.css">')));
+    return;
+}
 
 // Get the controller name
 $reqController = CORE::$request_url[0];
@@ -40,6 +56,7 @@ class CORE
             require_once $file;
             $_ENV["CURRENT"] = CORE::$request_url[0];
 
+            // Check if we have a class with the same name as the controller
             if(!class_exists(CORE::$request_url[0]))
             {
                 CORE::ERROR("Not found", 404, "Could not find controller class: " . CORE::$request_url[0]);
@@ -113,6 +130,23 @@ class CORE
         // Include the files
         include(CONFIG["filesystem"] . "SYSTEM/APPS/" . $_ENV["CURRENT"] . "/View/$file.php");
         include(ROOT . "/View/footer.php");
+    }
+
+    /**
+     * Loads an model in ROOT/Model
+     * @param string $name The model to load
+     */
+    public static function LoadModel($name)
+    {
+        // Get the path
+        $modelPath = ROOT . "/Model/$name.php";
+
+        // Check if the model exists
+        if(!file_exists($modelPath)) return false;
+
+        // include the file
+        require_once $modelPath;
+        return true;
     }
 
     /**

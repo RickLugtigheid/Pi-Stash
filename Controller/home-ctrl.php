@@ -1,4 +1,7 @@
 <?php
+// Load the needed model
+CORE::LoadModel("users");
+
 class home
 {
     public function index()
@@ -24,6 +27,39 @@ class home
         }
 
         // View the index page
-        CORE::VIEW("index", "Home", array("icons" => $icons));
+        CORE::VIEW("index", "Home", array("isAdmin" => User::HasPerms(ADMIN_PERM), "icons" => $icons, "headers" => array('<link rel="stylesheet" href="/' . $_ENV["BASENAME"] . '/public/assets/css/desktop.css">')));
+    }
+
+    public function login($args)
+    {
+
+        // Get the user by id
+        $userID = htmlspecialchars($_POST["id"]);
+
+        // Verify the password
+        if(User::Login($userID, $_POST["password"]))
+        {
+            session_start();
+            $_SESSION["userID"] = $userID;
+        }
+        else 
+        {
+            echo "<script> alert('Invalid password');</script>"; // Think about something different
+        }
+
+        // GO to the page we wanted to go to
+        header("Location: /". $_ENV["BASENAME"] . "/" . $_GET["path"]);
+    }
+    public function logout()
+    {
+        session_start();
+
+        // remove all session variables
+        session_unset();
+        // destroy the session
+        session_destroy();
+    
+        // login
+        header("Location: /". $_ENV["BASENAME"]);
     }
 }

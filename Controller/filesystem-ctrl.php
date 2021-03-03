@@ -1,4 +1,7 @@
 <?php
+// Load the models we need
+CORE::LoadModel("filesystem");
+CORE::LoadModel("users");
 
 class filesystem
 {
@@ -22,6 +25,13 @@ class filesystem
     }
     public function download($args)
     {
+        // Check if we have read permission
+        if(!User::HasPerms(READ_PERM))
+        {
+            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            return;
+        }
+
         // Get the requested file
         $file = CONFIG["filesystem"] . str_replace('%20', ' ', implode('\\', $args));
 
@@ -46,6 +56,13 @@ class filesystem
     }
     public function createfile($args)
     {
+        // Check if we have create permission
+        if(!User::HasPerms(CREATE_PERM))
+        {
+            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            return;
+        }
+
         // Get the file name
         $filename = array_pop($args);
         // Get the path of the file
@@ -75,6 +92,13 @@ class filesystem
     }
     public function createdir($args)
     {
+        // Check if we have create permission
+        if(!User::HasPerms(CREATE_PERM))
+        {
+            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            return;
+        }
+
         // Get the file path
         $filepath = CONFIG["filesystem"] . str_replace('%20', ' ', implode('\\', $args));
 
@@ -89,6 +113,13 @@ class filesystem
     }
     public function rename($args)
     {
+        // Check if we have update permission
+        if(!User::HasPerms(UPDATE_PERM))
+        {
+            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            return;
+        }
+
         // Get new and old name
         $newName = array_pop($args);
         $oldName = array_pop($args);
@@ -116,6 +147,13 @@ class filesystem
     }
     public function delete($args)
     {
+        // Check if we have delete permission
+        if(!User::HasPerms(DELETE_PERM))
+        {
+            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            return;
+        }
+
         // Get the file we want to delete
         $target = CONFIG["filesystem"] . str_replace('%20', ' ', implode('\\', $args));
 
@@ -141,6 +179,13 @@ class filesystem
     }
     public function showfile($args)
     {
+        // Check if we have read permission
+        if(!User::HasPerms(READ_PERM))
+        {
+            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            return;
+        }
+
         // Get the path of the file to show
         $filepath = CONFIG["filesystem"] . str_replace('%20', ' ', implode('\\', $args));
 
@@ -154,6 +199,13 @@ class filesystem
     }
     public function upload($args)
     {
+        // Check if we have create permission
+        if(!User::HasPerms(CREATE_PERM))
+        {
+            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            return;
+        }
+
         // (A) FUNCTION TO FORMULATE SERVER RESPONSE
         function verbose($ok=1,$info=""){
             // THROW A 400 ERROR ON FAILURE
@@ -206,6 +258,14 @@ class filesystem
     // [Text Editor]
     public function edit($args)
     {
+        var_dump(User::HasPerms(UPDATE_PERM));
+        // Check if we have update permission
+        if(!User::HasPerms(READ_PERM + UPDATE_PERM))
+        {
+            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            return;
+        }
+
         // Get the file path
         $filepath = CONFIG["filesystem"] . str_replace('%20', ' ', implode('\\', $args));
         
@@ -223,6 +283,13 @@ class filesystem
     }
     public function save($args)
     {
+        // Check if we have update permission
+        if(!User::HasPerms(UPDATE_PERM))
+        {
+            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            return;
+        }
+
         // Get the file path
         $filepath = CONFIG["filesystem"] . str_replace('%20', ' ', implode('\\', $args));
 

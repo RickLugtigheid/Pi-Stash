@@ -1,0 +1,49 @@
+/* Mobile friendly text */
+.t-big{
+    font-size: 5em;
+}
+.t-med{
+    font-size: 3em;
+}
+.t-small{
+    font-size: 1.5em;
+}
+@media (max-width: 700px){
+    .t-big{
+        font-size: 3em;
+    }
+    .t-med{
+        font-size: 2em;
+    }
+    .t-small{
+        font-size: 1em;
+    }
+}
+
+/* Files */
+#grid{
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    padding: 5px;
+}
+.drop{
+    font-size: 1.5em;
+}
+.icon{
+    text-decoration: none;
+    color: black;
+    font-size: 3rem;
+}
+@media (max-width: 700px){
+    #grid{
+        grid-template-columns: 35% 35% 35%;
+    }
+    .icon{
+        font-size: 2rem;
+    }
+    .drop{
+        font-size: 1em;
+    }
+}
+
+/* Misc */
