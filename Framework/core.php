@@ -89,7 +89,7 @@ class CORE
      * @param string $title Page title
      * @param array $args Arguments to give to the page
      */
-    public static function VIEW($file, $title, $args = null)
+    public static function View($file, $title, $args = null)
     {
         // Extract the variables to a local namespace
         if(!empty($args)) extract($args);
@@ -113,7 +113,7 @@ class CORE
      * @param string $title Page title
      * @param array $args Arguments to give to the page
      */
-    public static function APP_VIEW($file, $title, $args = null)
+    public static function AppView($file, $title, $args = null)
     {
         // Extract the variables to a local namespace
         if(!empty($args)) extract($args);
@@ -155,7 +155,7 @@ class CORE
      * @param int $code Error code. Like 404
      * @param string $message Larger error message
      */
-    public static function ERROR($type, $code, $message)
+    public static function Error($type, $code, $message)
     {
         $_ENV["CURRENT"] = "";
         CORE::VIEW("error", $type, array(

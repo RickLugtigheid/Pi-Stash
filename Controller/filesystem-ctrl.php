@@ -21,14 +21,14 @@ class filesystem
         ));
 
         // View the filesystem/index.php file
-        CORE::VIEW("index", "FS - " . $path, array("contents" => $contents, "curent" => $path));
+        CORE::View("index", "FS - " . $path, array("contents" => $contents, "curent" => $path));
     }
     public function download($args)
     {
         // Check if we have read permission
         if(!User::HasPerms(READ_PERM))
         {
-            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            CORE::Error("Permission Denied", 403, "Invalid permissions");
             return;
         }
 
@@ -52,14 +52,14 @@ class filesystem
             readfile($file);
             exit;
         }
-        else CORE::ERROR("Not Found", 404, "Could not find file '$file' to download");
+        else CORE::Error("Not Found", 404, "Could not find file '$file' to download");
     }
     public function createfile($args)
     {
         // Check if we have create permission
         if(!User::HasPerms(CREATE_PERM))
         {
-            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            CORE::Error("Permission Denied", 403, "Invalid permissions");
             return;
         }
 
@@ -95,7 +95,7 @@ class filesystem
         // Check if we have create permission
         if(!User::HasPerms(CREATE_PERM))
         {
-            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            CORE::Error("Permission Denied", 403, "Invalid permissions");
             return;
         }
 
@@ -116,7 +116,7 @@ class filesystem
         // Check if we have update permission
         if(!User::HasPerms(UPDATE_PERM))
         {
-            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            CORE::Error("Permission Denied", 403, "Invalid permissions");
             return;
         }
 
@@ -128,7 +128,7 @@ class filesystem
         $path = CONFIG["filesystem"] . str_replace('%20', ' ', implode('\\', $args));
 
         // Check if we aren't trying to rename a static folder
-        if(filesystem::IsStatic($oldName) || filesystem::IsStatic($newName)) CORE::ERROR("Could not rename file", 409, "Could not rename static folder/file");
+        if(filesystem::IsStatic($oldName) || filesystem::IsStatic($newName)) CORE::Error("Could not rename file", 409, "Could not rename static folder/file");
         else
         {
             // Get the extension of the old file/folder
@@ -150,7 +150,7 @@ class filesystem
         // Check if we have delete permission
         if(!User::HasPerms(DELETE_PERM))
         {
-            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            CORE::Error("Permission Denied", 403, "Invalid permissions");
             return;
         }
 
@@ -162,7 +162,7 @@ class filesystem
         // Make sure we can't delete a static folder/file
         if(filesystem::IsStatic($_GET["path"]))
         {
-            CORE::ERROR("Could not delete file/folder", 409, "Could not delete static folder/file");
+            CORE::Error("Could not delete file/folder", 409, "Could not delete static folder/file");
             return;
         }
 
@@ -182,7 +182,7 @@ class filesystem
         // Check if we have read permission
         if(!User::HasPerms(READ_PERM))
         {
-            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            CORE::Error("Permission Denied", 403, "Invalid permissions");
             return;
         }
 
@@ -202,7 +202,7 @@ class filesystem
         // Check if we have create permission
         if(!User::HasPerms(CREATE_PERM))
         {
-            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            CORE::Error("Permission Denied", 403, "Invalid permissions");
             return;
         }
 
@@ -262,7 +262,7 @@ class filesystem
         // Check if we have update permission
         if(!User::HasPerms(READ_PERM + UPDATE_PERM))
         {
-            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            CORE::Error("Permission Denied", 403, "Invalid permissions");
             return;
         }
 
@@ -272,21 +272,21 @@ class filesystem
         // Check if the file exists
         if(!file_exists($filepath))
         {
-            CORE::ERROR("Not found", 404, "Could not find file: " . $filepath);
+            CORE::Error("Not found", 404, "Could not find file: " . $filepath);
             return;
         }
 
         $type = mime_content_type($filepath);
         if($type == 'inode/x-empty') $type = pathinfo($filepath, PATHINFO_EXTENSION);
 
-        CORE::VIEW("textEditor", "Text Editor", array("curent" => str_replace('%20', ' ', implode('\\', array_slice($args, 0, -1, true))), "contents" => htmlspecialchars(file_get_contents($filepath)), "type" => $type, "name" => array_pop($args)));
+        CORE::View("textEditor", "Text Editor", array("curent" => str_replace('%20', ' ', implode('\\', array_slice($args, 0, -1, true))), "contents" => htmlspecialchars(file_get_contents($filepath)), "type" => $type, "name" => array_pop($args)));
     }
     public function save($args)
     {
         // Check if we have update permission
         if(!User::HasPerms(UPDATE_PERM))
         {
-            CORE::ERROR("Permission Denied", 403, "Invalid permissions");
+            CORE::Error("Permission Denied", 403, "Invalid permissions");
             return;
         }
 
