@@ -78,6 +78,31 @@ class CORE
             // Check if we have a controller method
             if($controller_method == '')  $controller_method = "index";
 
+            // Get the doc block of our function
+            $method_doc = (new ReflectionClass($controller_instance))->getMethod($controller_method)->getDocComment();
+            // Use the docblock to find out things abbout our function
+            if($method_doc)
+            {
+                // Use regex to get dockblock values; Get all key/values so key='@type' value='string'
+                $results = GetDockValues($method_doc);
+
+                // Check all keys and values
+                foreach($results as $key=>&$value)
+                {
+                    switch($key)
+                    {
+                        case "method":
+                            // Check if the function is called with correct method
+                            if($value !== $_SERVER['REQUEST_METHOD']) 
+                            {
+                                CORE::Error('Invalid method', 405, "Invalid request method. This function requires '$value' method");
+                                exit();
+                            }
+                            break;
+                    }
+                }
+            }
+
             // Now we call the controller method and give an array of args
             $controller_instance->$controller_method(array_slice(CORE::$request_url, 2, count(CORE::$request_url)-1, true));
         }

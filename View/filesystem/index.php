@@ -1,35 +1,3 @@
-<head>
-    <link rel="stylesheet" type="text/css" href="/<?=$_ENV["BASENAME"]?>/public/assets/style/files.css">
-</head>
-
-<style>
-    #grid{
-        display: grid;
-        grid-template-columns: 25% 25% 25% 25%;
-        padding: 5px;
-    }
-    .drop{
-        font-size: 1.5em;
-        color: black;
-        text-decoration: none;
-    }
-    .icon{
-        color: black;
-        font-size: 3rem;
-    }
-    @media (max-width: 700px){
-        #grid{
-            grid-template-columns: 35% 35% 35%;
-        }
-        .icon{
-            font-size: 2rem;
-        }
-        .drop{
-            font-size: 1em;
-        }
-    }
-</style>
-
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/flow.js/2.14.1/flow.min.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/plupload/3.1.2/plupload.full.min.js"></script>
 

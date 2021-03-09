@@ -7,7 +7,7 @@ Pi Stash is a Cloud platform for storing files.
 ### Supports:
 - [File storage](https://github.com/RickLugtigheid/Pi-Stash/wiki/FileSystem-App)
 - [Users](https://github.com/RickLugtigheid/Pi-Stash/wiki/Users--And-Permisions)
-- [Custom apps]()
+- [Custom apps](https://github.com/RickLugtigheid/Pi-Stash/wiki/Custom-Apps)
 
 
 ### Getting Started

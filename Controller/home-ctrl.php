@@ -29,10 +29,11 @@ class home
         // View the index page
         CORE::View("index", "Home", array("isAdmin" => User::HasPerms(ADMIN_PERM), "icons" => $icons, "headers" => array('<link rel="stylesheet" href="/' . $_ENV["BASENAME"] . '/public/assets/css/desktop.css">')));
     }
-
+    /**
+     * @method POST
+     */
     public function login($args)
     {
-
         // Get the user by id
         $userID = htmlspecialchars($_POST["id"]);
 
@@ -50,6 +51,16 @@ class home
         // GO to the page we wanted to go to
         header("Location: /". $_ENV["BASENAME"] . "/" . $_GET["path"]);
     }
+    public function login_guest()
+    {
+        // Start a session for our guest account
+        session_start();
+        $_SESSION["userID"] = -1;
+
+        // Check if there are perms for this acc
+        header("Location: /". $_ENV["BASENAME"] . "/" . $_GET["path"]);
+    }
+
     public function logout()
     {
         session_start();
@@ -61,5 +72,20 @@ class home
     
         // login
         header("Location: /". $_ENV["BASENAME"]);
+    }
+
+    public function reset_pass()
+    {
+        CORE::View('resetpass', 'Reset Password');
+    }
+    public function update_pass()
+    {
+        $pass_old = $_POST['password_old'];
+        $pass_new = $_POST['password_new'];
+        // Check if the old password is correct
+        if(User::Login($_SESSION['userID'], $pass_old))
+        {
+            User::UpdatePass($pass_new);
+        }
     }
 }

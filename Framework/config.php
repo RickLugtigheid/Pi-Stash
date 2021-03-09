@@ -13,6 +13,7 @@ $config["filesystem"] = "D:\\Pi-Stash\\";
 // RULES 
 // ----------------------------------
 $config["static_paths"] = ["SYSTEM", "SYSTEM/APPS", "FILES"];
+$config["guest_account"] = true; // A account anyone can use
 
 // ----------------------------------
 // SQL DATABASE
