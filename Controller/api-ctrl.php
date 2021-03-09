@@ -7,5 +7,11 @@ class api
         $resource = $args[0];
         
         // Route our api
+        switch($resource)
+        {
+            case "files":
+
+                break;
+        }
     }
 }

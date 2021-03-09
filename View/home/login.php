@@ -88,6 +88,7 @@
                             <span class="Error"></span>
                         </div>
                         <input type="hidden" value="<?=$user["userID"]?>" name="id">
+                        <input type="hidden" value="<?=$user["name"]?>" name="user">
                         <div class="form-group">
                             <input class="btn btn-primary btn-block" type="submit" value="Submit"/>
                         </div>

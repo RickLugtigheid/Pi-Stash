@@ -14,6 +14,7 @@ class filesystem
         $files = array_diff($path == "" ? scandir(CONFIG["filesystem"]) : scandir(CONFIG["filesystem"] . $path), array('.', '..'));
 
         $contents = array();
+        
         // Get an array of info for all files
         foreach($files as $file) array_push($contents,  array(
             "name" => $file,
@@ -21,7 +22,7 @@ class filesystem
         ));
 
         // View the filesystem/index.php file
-        CORE::View("index", "FS - " . $path, array("contents" => $contents, "curent" => $path));
+        CORE::View("index", "FS - " . $path, array("contents" => $contents, "curent" => $path, "isAdmin" => User::HasPerms(ADMIN_PERM)));
     }
     public function download($args)
     {
@@ -54,6 +55,9 @@ class filesystem
         }
         else CORE::Error("Not Found", 404, "Could not find file '$file' to download");
     }
+    /**
+     * @sanitize GET
+     */
     public function createfile($args)
     {
         // Check if we have create permission
@@ -81,6 +85,9 @@ class filesystem
 
                 // Create the file
                 file_put_contents($filepath, $content);
+
+                // Log this
+                Logger::LogSuccess("User '" . $_SESSION['name'] . "' Created file '" . str_replace('%20', ' ', implode('\\', $args) . "\\$filename") . "'", "system");
             }
         }
 
@@ -90,6 +97,9 @@ class filesystem
         if($location == '') header("Location: /". $_ENV["BASENAME"] ."/filesystem/browse/" . implode("\\", $args));
         else header("Location: /". $_ENV["BASENAME"] . $location . implode("\\", $args) . "\\$filename");
     }
+    /**
+     * @sanitize GET
+     */
     public function createdir($args)
     {
         // Check if we have create permission
@@ -106,6 +116,8 @@ class filesystem
         if(!is_dir($filepath) && $filepath != null) {
             // Create the directory
             mkdir($filepath);
+
+            Logger::LogSuccess("User '" . $_SESSION['name'] . "' Created fold '" . str_replace('%20', ' ', implode('\\', $args)) . "'", "system");
         }
 
         // Go back
@@ -141,6 +153,8 @@ class filesystem
                 "$path\\$oldName",
                 "$path\\$newName"
             );
+
+            Logger::LogSuccess("User '" . $_SESSION['name'] . "' renamed file/folder '$oldName' to '$newName'", "system");
         }
         // Go back
         header("Location: /". $_ENV["BASENAME"] ."/filesystem/browse/" . implode("\\", $args));
@@ -174,6 +188,9 @@ class filesystem
         else if(is_file($target)) {
             unlink($target);
         }
+
+        Logger::LogSuccess("User '" . $_SESSION['name'] . "' Deleted file/folder '$target'", "system");
+
         // Go back
         header("Location: /". $_ENV["BASENAME"] ."/filesystem/browse/" . implode("\\", $args));
     }
@@ -197,6 +214,10 @@ class filesystem
             exit();
         }
     }
+    /**
+     * @method POST
+     * @sanitize POST
+     */
     public function upload($args)
     {
         // Check if we have create permission
@@ -251,6 +272,9 @@ class filesystem
         if (!$chunks || $chunk == $chunks - 1) {
             rename("{$filepath}.part", $filepath);
         }
+
+        Logger::LogSuccess("User '" . $_SESSION['name'] . "' Uploaded file '$fileName'", "system");
+
         verbose(1, "Upload OK");
     }
 

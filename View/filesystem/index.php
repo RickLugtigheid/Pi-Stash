@@ -26,7 +26,7 @@
             <div class="file">
                 <?php 
                 // Make sure only admin's can acces system
-                if($file["name"] == "SYSTEM" && $isAdmin == true/* $isAdmin for testing */) return; 
+                if(($file["name"] == "SYSTEM" || stripos($curent, "SYSTEM") !== false) && !$isAdmin/* $isAdmin for testing */) return; 
                 switch(strtolower($file["ext"])){
                     case 'txt': 
                     ?><a class="icon" href="/<?=$_ENV["BASENAME"]?>/filesystem/edit/<?=$curent?>/<?=$file["name"]?>"><i class="far fa-file-alt"></i></a><?php
