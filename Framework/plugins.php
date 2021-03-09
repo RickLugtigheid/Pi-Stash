@@ -33,8 +33,13 @@ class SQL{
     public static function ExecutePrepare($query, $prepare_args){
         $conn = SQL::CreateConnection();
         $stmt = $conn->prepare($query);
+        
         //bind params
-        foreach($prepare_args as $key => $value) $stmt->bindParam($key, $value);
+        foreach($prepare_args as $key => &$value) 
+        {
+            echo "bindParam($key, $value)<br>";
+            $stmt->bindParam($key, $value);
+        }
         $stmt->execute();
     }
     /**
@@ -56,4 +61,24 @@ class SQL{
     public static function ExecutePrepareFile($path, $prepare_args){
         return SQL::ExecutePrepare(file_get_contents($path), $prepare_args);
     }
+}
+
+function GetDockValues($doc_string)
+{
+    $results = array();
+    // Get key value pairs from dockblock
+    // Example:
+    //  key => "@type", value => "string"
+    $pattern = "/@(.*?)\s([a-zA-Z0-9]*)/m";
+    preg_match_all($pattern, $doc_string, $matches, PREG_PATTERN_ORDER);
+    
+    // Matches[0] = full values
+    // Matches[1] = group1 aka key
+    // Matches[2] = group2 aka value
+    foreach($matches[1] as $key)
+    foreach($matches[2] as $value)
+        $results[$key] = $value;
+
+    //Return results
+    return $results;
 }

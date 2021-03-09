@@ -17,4 +17,22 @@ class admin
     {
         CORE::View("index", "admin");
     }
+    public function cli()
+    {
+        CORE::View('cli', 'Command Prompt');
+    }
+    /**
+     * @method POST
+     * @sanitize POST
+     */
+    public function createUser()
+    {
+        // Get the values we want
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        $perms = $_POST['perms'];
+        
+        // Create a new user
+        User::Create($username, $password, $perms);
+    }
 }

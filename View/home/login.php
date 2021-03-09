@@ -58,7 +58,17 @@
 <div class="container">
 	<div class="row">
         <ul class="listrap" style="width: 100%;">
-            <?php foreach($users as $user) { ?>
+        <?php if(CONFIG['guest_account']) {?>
+            <li>
+                <a href="/<?=$_ENV["BASENAME"]?>/home/login_guest?=<?=$path?>" title="Login as Guest" class="app t-big" style="color: rgb(3, 0, 194);">
+                    <div class="listrap-toggle">
+                        <span></span>
+                        <i class="img-circle fas fa-user"></i>
+                    </div>
+                    <strong>Guest</strong>
+                </a>
+            </li>
+            <?php } foreach($users as $user) { ?>
                 <li>
                     <a title="Login as <?=$user["name"]?>" class="app t-big" style="color: rgb(3, 0, 194);" data-toggle="modal" data-target="#login-<?=$user["userID"]?>">
                         <div class="listrap-toggle">
@@ -78,6 +88,7 @@
                             <span class="Error"></span>
                         </div>
                         <input type="hidden" value="<?=$user["userID"]?>" name="id">
+                        <input type="hidden" value="<?=$user["name"]?>" name="user">
                         <div class="form-group">
                             <input class="btn btn-primary btn-block" type="submit" value="Submit"/>
                         </div>

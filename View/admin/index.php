@@ -53,8 +53,28 @@ function ShowField(element) {
 
 
     <div id="users" class="container tab-pane fade"><br>
-      <h3>Log Settings</h3>
-      <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+      <div class="container mb-2 mt-5">
+          <p class="display-2 text-center">Create user</p>
+          <form action="/<?=$_ENV["BASENAME"]?>/admin/createUser" method="post">
+              <div class="form-group">
+                  <label>Username:</label>
+                  <input class="form-control" type="text" name="username" required placeholder="Enter Username"/>
+                  <span class="Error"></span>
+              </div>
+              <div class="form-group">
+                  <label>Password:</label>
+                  <input class="form-control" type="password" name="password" required placeholder="Enter Temp Password"/>
+                  <span class="Error"></span>
+              </div>
+              <div class="form-group">
+                  <label>Permisions:</label>
+                  <input class="form-control" type="number" min="1" name="perms" required placeholder="Enter Perms; 0001"/>
+              </div>
+              <div class="form-group">
+                  <input class="btn btn-primary btn-block" type="submit" value="Submit"/>
+              </div>
+          </form>
+      </div>
     </div>
   </div>
 </div>

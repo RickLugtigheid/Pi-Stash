@@ -78,6 +78,36 @@ class CORE
             // Check if we have a controller method
             if($controller_method == '')  $controller_method = "index";
 
+            // Get the doc block of our function
+            $method_doc = (new ReflectionClass($controller_instance))->getMethod($controller_method)->getDocComment();
+            // Use the docblock to find out things abbout our function
+            if($method_doc)
+            {
+                // Use regex to get dockblock values; Get all key/values so key='@type' value='string'
+                $results = GetDockValues($method_doc);
+
+                // Check all keys and values
+                foreach($results as $key=>&$value)
+                {
+                    switch($key)
+                    {
+                        case "method":
+                            // Check if the function is called with correct method
+                            if($value !== $_SERVER['REQUEST_METHOD']) 
+                            {
+                                CORE::Error('Invalid method', 405, "Invalid request method. This function requires '$value' method");
+                                exit();
+                            }
+                            break;
+                        case "sanitize":
+                            // Sanitize the values we want to sanitize
+                            if(strpos($value, 'POST') !== false) foreach($_POST as $post) CORE::Sanitize($post);
+                            else if(strpos($value, 'GET') !== false) foreach($_GET as $get) CORE::Sanitize($get);
+                            break;
+                    }
+                }
+            }
+
             // Now we call the controller method and give an array of args
             $controller_instance->$controller_method(array_slice(CORE::$request_url, 2, count(CORE::$request_url)-1, true));
         }
@@ -163,5 +193,54 @@ class CORE
             "code" => $code,
             "message" => $message
         ));
+    }
+    
+    /**
+     * Sanitize the input data
+     * @param any $data Data to validate
+     */
+    public static function Sanitize($data) 
+    {
+        $data = trim($data);
+        $data = htmlspecialchars($data);
+        $data = stripcslashes($data);
+        return $data;
+    }
+}
+
+/**
+ * @static
+ */
+class Logger
+{
+    private static $log_folder;
+
+    public static function LogInfo($message, $logfile) { Logger::WriteLine($message, "Inf", $logfile); }
+    public static function LogSuccess($message, $logfile) { Logger::WriteLine($message, "Scs", $logfile); }
+    public static function LogWarning($message, $logfile) { Logger::WriteLine($message, "Wrn", $logfile); }
+    public static function LogError($message, $logfile) { Logger::WriteLine($message, "Err", $logfile); }
+
+    /**
+     * Write a line to a log file
+     */
+    private static function WriteLine($message, $type, $logfile)
+    {
+        // Check if we have a log folder
+        if(!isset(Logger::$log_folder)) 
+        {
+            Logger::$log_folder = CONFIG['filesystem'] . "SYSTEM\\LOGS\\";
+            // Create the folder if it doesn't exist
+            if(!is_dir(Logger::$log_folder)) mkdir(Logger::$log_folder);
+        }
+        // Get path to the log
+        $path = Logger::$log_folder . $logfile . '.log';
+        // If there is no file with this name we create one
+        if(!is_file($path)) file_put_contents($path, "");
+        // Create a stream to our file
+        $stream = fopen($path, 'a');
+        // Write to the stream
+        fwrite($stream, date("Y-m-d H:i:s.ms") . "  $type   $message\n");
+        // Close our file stream
+        fclose($stream);
     }
 }
