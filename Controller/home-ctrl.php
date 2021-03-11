@@ -27,7 +27,7 @@ class home
         }
 
         // View the index page
-        CORE::View("index", "Home", array("isAdmin" => User::HasPerms(ADMIN_PERM), "icons" => $icons, "headers" => array('<link rel="stylesheet" href="/' . $_ENV["BASENAME"] . '/public/assets/css/desktop.css">')));
+        CORE::View("index", "Home", array("isAdmin" => User::HasPerms(ADMIN_PERM), "icons" => $icons, "headers" => array('<link rel="stylesheet" href="/' . ROOT_DIR . '/public/assets/css/desktop.css">')));
     }
     /**
      * @method POST
@@ -52,7 +52,7 @@ class home
         }
 
         // GO to the page we wanted to go to
-        header("Location: /". $_ENV["BASENAME"] . "/" . $_GET["path"]);
+        header("Location: /". ROOT_DIR . "/" . $_GET["path"]);
     }
     public function login_guest()
     {
@@ -62,7 +62,7 @@ class home
         $_SESSION["name"] = "Guest";
 
         // Check if there are perms for this acc
-        header("Location: /". $_ENV["BASENAME"] . "/" . $_GET["path"]);
+        header("Location: /". ROOT_DIR . "/" . $_GET["path"]);
     }
 
     public function logout()
@@ -75,7 +75,7 @@ class home
         session_destroy();
     
         // login
-        header("Location: /". $_ENV["BASENAME"]);
+        header("Location: /". ROOT_DIR);
     }
 
     public function reset_pass()
@@ -99,6 +99,6 @@ class home
         }
 
         // Go back
-        header("Location: /". $_ENV["BASENAME"]);
+        header("Location: /". ROOT_DIR);
     }
 }

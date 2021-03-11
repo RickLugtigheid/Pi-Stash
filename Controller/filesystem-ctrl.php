@@ -94,8 +94,8 @@ class filesystem
         // Go back to the correct page
         $location = $_GET["loc"];
         var_dump($location);
-        if($location == '') header("Location: /". $_ENV["BASENAME"] ."/filesystem/browse/" . implode("\\", $args));
-        else header("Location: /". $_ENV["BASENAME"] . $location . implode("\\", $args) . "\\$filename");
+        if($location == '') header("Location: /". ROOT_DIR ."/filesystem/browse/" . implode("\\", $args));
+        else header("Location: /". ROOT_DIR . $location . implode("\\", $args) . "\\$filename");
     }
     /**
      * @sanitize GET
@@ -117,11 +117,11 @@ class filesystem
             // Create the directory
             mkdir($filepath);
 
-            Logger::LogSuccess("User '" . $_SESSION['name'] . "' Created fold '" . str_replace('%20', ' ', implode('\\', $args)) . "'", "system");
+            Logger::LogSuccess("User '" . $_SESSION['name'] . "' Created folder '" . str_replace('%20', ' ', implode('\\', $args)) . "'", "system");
         }
 
         // Go back
-        header("Location: /". $_ENV["BASENAME"] ."/filesystem/browse/" . implode("\\", $args));
+        header("Location: /". ROOT_DIR ."/filesystem/browse/" . implode("\\", $args));
     }
     public function rename($args)
     {
@@ -154,10 +154,10 @@ class filesystem
                 "$path\\$newName"
             );
 
-            Logger::LogSuccess("User '" . $_SESSION['name'] . "' renamed file/folder '$oldName' to '$newName'", "system");
+            Logger::LogInfo("User '" . $_SESSION['name'] . "' renamed file/folder '$oldName' to '$newName'", "system");
         }
         // Go back
-        header("Location: /". $_ENV["BASENAME"] ."/filesystem/browse/" . implode("\\", $args));
+        header("Location: /". ROOT_DIR ."/filesystem/browse/" . implode("\\", $args));
     }
     public function delete($args)
     {
@@ -189,10 +189,10 @@ class filesystem
             unlink($target);
         }
 
-        Logger::LogSuccess("User '" . $_SESSION['name'] . "' Deleted file/folder '$target'", "system");
+        Logger::LogWarning("User '" . $_SESSION['name'] . "' Deleted file/folder '$target'", "system");
 
         // Go back
-        header("Location: /". $_ENV["BASENAME"] ."/filesystem/browse/" . implode("\\", $args));
+        header("Location: /". ROOT_DIR ."/filesystem/browse/" . implode("\\", $args));
     }
     public function showfile($args)
     {
@@ -273,8 +273,6 @@ class filesystem
             rename("{$filepath}.part", $filepath);
         }
 
-        Logger::LogSuccess("User '" . $_SESSION['name'] . "' Uploaded file '$fileName'", "system");
-
         verbose(1, "Upload OK");
     }
 
@@ -324,7 +322,7 @@ class filesystem
         file_put_contents($filepath, $newContents);
 
         // Go back
-        header("Location: /". $_ENV["BASENAME"] . $_GET["loc"] . implode("\\", $args));
+        header("Location: /". ROOT_DIR . $_GET["loc"] . implode("\\", $args));
     }
 
     // Misc

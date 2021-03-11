@@ -3,7 +3,7 @@
 require_once ROOT . "/Framework/plugins.php";
 
 // Get the folder name
-$_ENV["BASENAME"] = basename(dirname(__DIR__));
+define("ROOT_DIR", basename(dirname(__DIR__)));
 
 // Get the request URL
 CORE::$request_url = isset($_SERVER['PATH_INFO']) ? explode('/', $_SERVER['PATH_INFO']) : null;
@@ -17,7 +17,7 @@ if((CORE::$request_url[1] != "login") && !isset($_SESSION["userID"]))
     // If not we send them to the login page
     $_ENV["CURRENT"] = "home";
     CORE::VIEW("login", "Login", array("users" => SQL::Execute("SELECT * FROM USERS"), "path" => $_SERVER['PATH_INFO'],
-    "headers" => array('<link rel="stylesheet" href="/' . $_ENV["BASENAME"] . '/public/assets/css/desktop.css">')));
+    "headers" => array('<link rel="stylesheet" href="/' . ROOT_DIR . '/public/assets/css/desktop.css">')));
     return;
 }
 
@@ -32,7 +32,10 @@ if($reqController == null)
 
     CORE::LoadController(ROOT . "/Controller/" . CONFIG["default_controller"] . "-ctrl.php");
 }
+// Check if the controller exists
+// If not check if we can get an app instead
 else if (!file_exists(ROOT . "/Controller/$reqController-ctrl.php")) CORE::LoadController(CONFIG["filesystem"] . "SYSTEM\\APPS\\$reqController\\router.php");
+// Else we load the requested controller
 else CORE::LoadController(ROOT . "/Controller/$reqController-ctrl.php");
 
 class CORE
@@ -69,14 +72,13 @@ class CORE
             // Get contoller method
             $controller_method = CORE::$request_url[1];
 
+            // Check if we have a controller method
+            if($controller_method == '')  $controller_method = "index";
             if(!method_exists($controller_instance, $controller_method))
             {
                 CORE::ERROR("Not found", 404, "Could not find controller method: " . $controller_method);
                 return;
             }
-            
-            // Check if we have a controller method
-            if($controller_method == '')  $controller_method = "index";
 
             // Get the doc block of our function
             $method_doc = (new ReflectionClass($controller_instance))->getMethod($controller_method)->getDocComment();
@@ -89,6 +91,7 @@ class CORE
                 // Check all keys and values
                 foreach($results as $key=>&$value)
                 {
+                    var_dump("$key:$value");
                     switch($key)
                     {
                         case "method":
@@ -101,8 +104,8 @@ class CORE
                             break;
                         case "sanitize":
                             // Sanitize the values we want to sanitize
-                            if(strpos($value, 'POST') !== false) foreach($_POST as $post) CORE::Sanitize($post);
-                            else if(strpos($value, 'GET') !== false) foreach($_GET as $get) CORE::Sanitize($get);
+                            if(strpos($value, 'POST') !== false) foreach($_POST as $post_name=>&$post) $_POST[$post_name] = CORE::Sanitize($post);
+                            else if(strpos($value, 'GET') !== false) foreach($_GET as $get_name=>&$get) $_GET[$get_name] = CORE::Sanitize($get);
                             break;
                     }
                 }
@@ -236,6 +239,11 @@ class Logger
         $path = Logger::$log_folder . $logfile . '.log';
         // If there is no file with this name we create one
         if(!is_file($path)) file_put_contents($path, "");
+
+        // Check if the file size isn't to big
+        // If the file is to big we erase the file
+        if(round(filesize($path) / 1024) >= CONFIG['max_log_size']) file_put_contents($path, "");
+
         // Create a stream to our file
         $stream = fopen($path, 'a');
         // Write to the stream

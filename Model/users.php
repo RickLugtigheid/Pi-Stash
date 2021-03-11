@@ -18,16 +18,18 @@ class User
      * @param string $password Password for the user
      * @requred Admin Permisions
      */
-    public static function Create($name, $password, $perms)
+    public static function Create($name, $password)
     {
         // Check if we have permission to do this
         if(User::HasPerms(ADMIN_PERM))
         {
             // Create a new user in the database with the given info
-            SQL::ExecutePrepare("INSERT INTO Users (name, password) values (:name, :pass)", array(
+            $user = SQL::ExecutePrepare("INSERT INTO Users (name, password) values (:name, :pass)", array(
                 ":name" => $name,
                 ":pass" => password_hash($password, PASSWORD_DEFAULT)
             ));
+
+            Logger::LogSuccess("User '" . $_SESSION['name'] . "' created user '$name'", "users");
         }
         else CORE::ERROR("Permission Denied", 403, "We have no permission to create a new user");
     }
@@ -67,10 +69,32 @@ class User
         // Only admin can change its perms
         else if(User::HasPerms(ADMIN_PERM))
         {
+            // Create a row for the user if not exists
+            // For this we use IGNORE to ignore duplication attempts (to not throw error when already exists)
+            SQL::ExecutePrepare("INSERT IGNORE INTO userspermissions (userID) VALUES (:uid)", array(
+                ":uid" => $userID
+            ));
+
             // Update the user permisions
             SQL::Execute("UPDATE userspermissions SET permissions=$new_perms WHERE userID=$userID");
+
+            Logger::LogInfo("User '" . $_SESSION['name'] . "' updated permisions for user with id '$userID'", "users");
         }
         else CORE::ERROR("Permission Denied", 403, "We have no permission to update a users permisions");
+    }
+    public static function Delete($userID)
+    {
+        // Admin and others can't delete there own account
+        if($userID === $_SESSION['userID']) CORE::Error('Not Acceptable', 406, 'You can\'t delete your own account');
+        // Only admin can change its perms
+        else if(User::HasPerms(ADMIN_PERM))
+        {
+            // Update the user permisions
+            SQL::Execute("DELETE FROM users WHERE userID=$userID");
+
+            Logger::LogWarning("User '" . $_SESSION['name'] . "' deleted user with id '$userID'", "users");
+        }
+        else CORE::ERROR("Permission Denied", 403, "We have no permission to delete this user");
     }
     /**
      * @param int $perm
@@ -82,7 +106,7 @@ class User
         if(!isset($_SESSION["userID"])) return false;
 
         // Get the permissions
-        $userPerms = SQL::Execute("SELECT * FROM UsersPermissions WHERE userID=" . $_SESSION["userID"])->fetch();
+        $userPerms = User::GetPerms();
 
         // Check if the user has these permissions with bitwise AND
         return bindec($perms) == (bindec($userPerms["permissions"]) & bindec($perms));
@@ -94,6 +118,15 @@ class User
         //   1000   # RequiredPerms
         // & ====
         //   1000   # Is the same as the RequiredPerms So permission granted!
+    }
+
+    /**
+     * Gets the permisions of the curent user
+     */
+    public static function GetPerms($all = false)
+    {
+        if($all) return SQL::Execute("SELECT * FROM UsersPermissions");
+        return SQL::Execute("SELECT * FROM UsersPermissions WHERE userID=" . $_SESSION["userID"])->fetch();
     }
 
     public static function Login($id, $password)

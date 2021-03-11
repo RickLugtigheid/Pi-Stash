@@ -7,7 +7,7 @@
             <div class="col-md-12 text-center">
                 <span class="display-1 d-block"><?=$code?></span>
                 <div class="mb-4 lead">Oops! We found an error.</div>
-                <a href="/<?=$_ENV["BASENAME"]?>/" class="btn btn-link">Back to Home</a>
+                <a href="/<?=ROOT_DIR?>/" class="btn btn-link">Back to Home</a>
             </div>
         </div>
     </div>

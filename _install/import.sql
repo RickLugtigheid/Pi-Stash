@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Gegenereerd op: 03 mrt 2021 om 08:46
+-- Gegenereerd op: 09 mrt 2021 om 11:46
 -- Serverversie: 8.0.18
 -- PHP-versie: 7.3.11
 
@@ -30,8 +30,8 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `users` (
   `userID` int(11) NOT NULL,
-  `name` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -39,8 +39,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`userID`, `name`, `password`) VALUES
-(-1, 'Guest', '123'),
-(1, 'Admin', 'admin');
+(0, 'Admin', '$2y$10$4Ud4hLPGDXIOSDQTK5WBfuPd1GzXPTWlPShz4Yun1VSAvc/zWkc2G');
 
 -- --------------------------------------------------------
 
@@ -58,7 +57,7 @@ CREATE TABLE `userspermissions` (
 --
 
 INSERT INTO `userspermissions` (`userID`, `permissions`) VALUES
-(1, 1111);
+(0, 1111);
 
 --
 -- Indexen voor geëxporteerde tabellen
@@ -78,7 +77,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT voor een tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

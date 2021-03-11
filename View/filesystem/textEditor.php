@@ -7,6 +7,12 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/clike/clike.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/php/php.min.js"></script>
 
+<ul class="nav nav-pills">
+      <li>
+          <a href="/<?=ROOT_DIR?>/" style="font-size: 1.5em;"><i class="fas fa-chevron-circle-left"></i></a>
+      </li>
+</ul>
+
 <!-- Toolbar -->
 <nav class="navbar navbar-default">
     <div class="container-fluid">
@@ -14,7 +20,7 @@
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                <li><a onclick="let nName = prompt('New name: '); if(nName != null) location.replace(`/<?=$_ENV["BASENAME"]?>/filesystem/createfile/<?=str_replace('\\', '/', $curent);?>/${nName}?loc=/filesystem/edit/`);">New</a></li>
+                <li><a onclick="let nName = prompt('New name: '); if(nName != null) location.replace(`/<?=ROOT_DIR?>/filesystem/createfile/<?=str_replace('\\', '/', $curent);?>/${nName}?loc=/filesystem/edit/`);">New</a></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="#">Open</a></li>
                 <li role="separator" class="divider"></li>
@@ -72,7 +78,7 @@
         document.forms[0].submit();
     }
 </script>
-<form id="save-form" action="/<?=$_ENV["BASENAME"]?>/filesystem/save/<?=str_replace('\\', '/', $curent);?>/<?=$name?>?loc=/filesystem/edit/" style="display: none;" method="POST">
+<form id="save-form" action="/<?=ROOT_DIR?>/filesystem/save/<?=str_replace('\\', '/', $curent);?>/<?=$name?>?loc=/filesystem/edit/" style="display: none;" method="POST">
     <textarea type="text" id="new-contents" name="newContents">
 
     </textarea>

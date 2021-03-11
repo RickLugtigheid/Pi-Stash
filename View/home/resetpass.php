@@ -1,6 +1,6 @@
 <div class="container mb-2 mt-5">
     <p class="display-2 text-center">Reset Password</p>
-    <form action="/<?=$_ENV["BASENAME"]?>/home/update_pass" method="post">
+    <form action="/<?=ROOT_DIR?>/home/update_pass" method="post">
         <div class="form-group">
             <label>Old Password:</label>
             <input class="form-control" type="password" name="password_old" required placeholder="Enter Old Password"/>

@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
-        <link rel="icon" href="/<?=$_ENV["BASENAME"]?>/public/assets/images/PS-Logo.svg">
+        <link rel="icon" href="/<?=ROOT_DIR?>/public/assets/images/PS-Logo.svg">
         
         <script src="https://kit.fontawesome.com/5eb0758b3a.js" crossorigin="anonymous"></script>
 
@@ -20,7 +20,7 @@
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         
-        <link rel="stylesheet" href="/<?=$_ENV["BASENAME"]?>/public/assets/css/style.css">
+        <link rel="stylesheet" href="/<?=ROOT_DIR?>/public/assets/css/style.css">
     </head>
     <body>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
