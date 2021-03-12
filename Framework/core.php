@@ -91,7 +91,6 @@ class CORE
                 // Check all keys and values
                 foreach($results as $key=>&$value)
                 {
-                    var_dump("$key:$value");
                     switch($key)
                     {
                         case "method":

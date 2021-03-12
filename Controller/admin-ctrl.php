@@ -15,10 +15,81 @@ class admin
 {
     public function index()
     {
+        // Get permisions
         $perms = array();
         foreach(User::GetPerms(true) as $perm)
             $perms[$perm['userID']] = $perm['permissions'];
-        CORE::View("index", "admin", array("users" => User::Read(), "perms" => $perms));
+
+        $backups = array();
+        foreach(array_diff(scandir(CONFIG['backup_folder']), array('.', '..')) as $backup)
+            $backups[] = array(
+                "name" => $backup,
+                "path" => CONFIG['backup_folder'] . $backup
+            );
+        
+        CORE::View("index", "admin", array("users" => User::Read(), "backups" => $backups, "perms" => $perms));
+    }
+    public function create_backup()
+    {
+        // Create a new backup
+        CORE::LoadModel('backup');
+        CORE::LoadModel('filesystem');
+
+        // View 
+        if(!Backups::Create()) 
+        {
+            CORE::Error('Internal Server Error', 500, 'Error when creating database');
+            return;
+        }
+        // Go back
+        header("Location: /". ROOT_DIR . "/admin/index");
+    }
+    public function load_backup($args)
+    {
+        CORE::LoadModel('backup');
+        CORE::LoadModel('filesystem');
+        $backup = CONFIG['backup_folder'] . $args[2];
+
+        // Set our last created backup as fallback point
+        Backups::SetFallbackPoint(Backups::GetLast());
+
+        // Load our selected backup
+        if(Backups::Load($backup)) header("Location: /". ROOT_DIR . "/admin/index");
+    }
+    public function delete_backup($args)
+    {
+        $backup = CONFIG['backup_folder'] . $args[2];
+
+        // If exists delete the backup
+        if(file_exists($backup)) unlink($backup);
+
+        // Go back
+        header("Location: /". ROOT_DIR . "/admin/index");
+    }
+    public function download_backup($args)
+    {
+        $backup = CONFIG['backup_folder'] . $args[2];
+
+        // If exists download it
+        if(file_exists($backup))
+        {
+            // Load the file to page
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename='.basename($backup));
+            header('Content-Transfer-Encoding: binary');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($backup));
+            ob_clean();
+            flush();
+            readfile($backup);
+            exit;
+        }
+
+        // Go back
+        header("Location: /". ROOT_DIR . "/admin/index");
     }
     public function cli()
     {
@@ -72,6 +143,6 @@ class admin
         User::UpdatePerms($id, $perms);
 
         // Go back
-        //header("Location: /". ROOT_DIR . "/admin/index");
+        header("Location: /". ROOT_DIR . "/admin/index");
     }
 }

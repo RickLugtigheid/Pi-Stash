@@ -30,41 +30,36 @@ class home
         CORE::View("index", "Home", array("isAdmin" => User::HasPerms(ADMIN_PERM), "icons" => $icons, "headers" => array('<link rel="stylesheet" href="/' . ROOT_DIR . '/public/assets/css/desktop.css">')));
     }
     /**
-     * @method POST
      * @sanitize POST GET
      */
     public function login($args)
     {
-        // Get the user by id
-        $userID = $_POST["id"];
-        $name   = $_POST["user"];
-
-        // Verify the password
-        if(User::Login($userID, $_POST["password"]))
+        session_start();
+        if($_GET['guest']) 
         {
-            session_start();
-            $_SESSION["userID"] = $userID;
-            $_SESSION["name"] = $name;
+            $_SESSION["userID"] = -1;
+            $_SESSION["name"] = "Guest";
         }
-        else 
+        else
         {
-            echo "<script> alert('Invalid password');</script>"; // Think about something different
-        }
+            // Get the user by id
+            $userID = $_POST["id"];
+            $name   = $_POST["user"];
 
+            // Verify the password
+            if(User::Login($userID, $_POST["password"]))
+            {
+                $_SESSION["userID"] = $userID;
+                $_SESSION["name"] = $name;
+            }
+            else 
+            {
+                echo "<script> alert('Invalid password');</script>"; // Think about something different
+            }
+        }
         // GO to the page we wanted to go to
         header("Location: /". ROOT_DIR . "/" . $_GET["path"]);
     }
-    public function login_guest()
-    {
-        // Start a session for our guest account
-        session_start();
-        $_SESSION["userID"] = -1;
-        $_SESSION["name"] = "Guest";
-
-        // Check if there are perms for this acc
-        header("Location: /". ROOT_DIR . "/" . $_GET["path"]);
-    }
-
     public function logout()
     {
         session_start();

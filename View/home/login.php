@@ -60,7 +60,7 @@
         <ul class="listrap" style="width: 100%;">
         <?php if(CONFIG['guest_account']) {?>
             <li>
-                <a href="/<?=ROOT_DIR?>/home/login_guest?=<?=$path?>" title="Login as Guest" class="app t-big" style="color: rgb(3, 0, 194);">
+                <a href="/<?=ROOT_DIR?>/home/login?path=<?=$path?>&guest=true" title="Login as Guest" class="app t-big" style="color: rgb(3, 0, 194);">
                     <div class="listrap-toggle">
                         <span></span>
                         <i class="img-circle fas fa-user"></i>
