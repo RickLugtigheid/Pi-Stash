@@ -241,7 +241,15 @@ class Logger
 
         // Check if the file size isn't to big
         // If the file is to big we erase the file
-        if(round(filesize($path) / 1024) >= CONFIG['max_log_size']) file_put_contents($path, "");
+        if(round(filesize($path) / 1024) >= CONFIG['max_log_size'])
+        {
+            if(!class_exists('FS')) CORE::LoadModel('filesystem');
+            // Check if we should rotate logs
+            if(CONFIG['log_rotate']) FS::Zip($path, Logger::$log_folder . "$logfile-" . date('Y-m-d-H.i.s.ms'), $logfile);
+            
+            // Clear logfile
+            file_put_contents($path, "");
+        } 
 
         // Create a stream to our file
         $stream = fopen($path, 'a');

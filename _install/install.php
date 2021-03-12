@@ -4,7 +4,7 @@
 
 echo "Getting config...\n";
 
-require './Framework/config.php';
+require '../Framework/config.php';
 echo "Creating FS Folders...\n";
 mkdir(CONFIG['filesystem']);
 echo "[1/4]: Main folder... CREATED\n";
@@ -15,8 +15,12 @@ echo "[3/4]: /SYSTEM... CREATED\n";
 mkdir(CONFIG['filesystem'] . 'SYSTEM\\APPS');
 echo "[4/4]: /SYSTEM/APPS... CREATED\n";
 
+echo "Creating Backups Folder...\n";
+mkdir(CONFIG['backup_folder']);
+echo CONFIG['backup_folder'] . "... CREATED\n";
+
 echo "Getting Plugins...\n";
-require './Framework/plugins.php';
+require '../Framework/plugins.php';
 
 echo "Creating Database...\n";
 $db = CONFIG['default_database'];

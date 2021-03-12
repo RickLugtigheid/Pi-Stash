@@ -50,11 +50,11 @@ class admin
         CORE::LoadModel('filesystem');
         $backup = CONFIG['backup_folder'] . $args[2];
 
-        // Set our last created backup as fallback point
-        Backups::SetFallbackPoint(Backups::GetLast());
+        // Set our last created backup as fallback point and load out backup
+        Backups::LoadWithFallback(Backups::GetLast(), Backups::Load($backup));
 
-        // Load our selected backup
-        if(Backups::Load($backup)) header("Location: /". ROOT_DIR . "/admin/index");
+        // Go back
+        header("Location: /". ROOT_DIR . "/admin/index");
     }
     public function delete_backup($args)
     {
