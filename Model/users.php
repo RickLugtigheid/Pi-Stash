@@ -1,7 +1,7 @@
 <?php
 
 // Start session
-session_start();
+if(!isset($_SESSION)) session_start();
 
 // Define all permissions
 define("CREATE_PERM", 1000);

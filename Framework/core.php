@@ -6,13 +6,13 @@ require_once ROOT . "/Framework/plugins.php";
 define("ROOT_DIR", basename(dirname(__DIR__)));
 
 // Get the request URL
-CORE::$request_url = isset($_SERVER['PATH_INFO']) ? explode('/', $_SERVER['PATH_INFO']) : null;
+CORE::$request_url = isset($_SERVER['PATH_INFO']) ? explode('/', $_SERVER['PATH_INFO']) : array('', CONFIG['default_controller'], 'index');
 if(isset(CORE::$request_url)) array_shift(CORE::$request_url);
 
 // Check if we are loged in
 session_start();
 // Check if a user is logedin
-if((CORE::$request_url[1] != "login") && !isset($_SESSION["userID"]))
+if(!isset(CORE::$request_url) && (CORE::$request_url[1] != "login") && !isset($_SESSION["userID"]))
 {
     // If not we send them to the login page
     $_ENV["CURRENT"] = "home";

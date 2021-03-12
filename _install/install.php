@@ -2,7 +2,7 @@
 // You can not reach this file by url.
 // To execute this file use: php /path/to/this/install.php
 
-echo "Getting config...<br>";
+echo "Getting config...\n";
 
 require './Framework/config.php';
 echo "Creating FS Folders...\n";
@@ -28,7 +28,7 @@ if(is_array($err) && array_key_exists('error', $err))
 }
 echo "[1/2]: Database... CREATED\n";
 
-$err = SQL::ExecuteFile("./_install/import.sql");
+$err = SQL::ExecuteFile("./import.sql");
 if(is_array($err) && array_key_exists('error', $err)) 
 {
     var_dump($err);

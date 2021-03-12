@@ -91,10 +91,6 @@ class admin
         // Go back
         header("Location: /". ROOT_DIR . "/admin/index");
     }
-    public function cli()
-    {
-        CORE::View('cli', 'Command Prompt');
-    }
     /**
      * @method POST
      * @sanitize POST
