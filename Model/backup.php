@@ -3,12 +3,31 @@ class Backups
 {
     static $fallback;
     /**
-     * Set a fallback point to go to on error
-     * @param string $backup_name Name of the backup to fallback to
+     * Use a fallback point while loading a backup
+     * @param $backup_path Name of the backup to load
+     * @param string $fallback_path Name of the backup to fallback to
      */
-    public static function SetFallbackPoint($backup_name)
+    public static function LoadWithFallback($backup_path, $fallback_path)
     {
-        $fallback = $backup_name;
+        // Create fallback
+        $fallback = './fallback.zip';
+        // Create a copy of the fallback
+        copy($fallback_path, $fallback);
+
+        // Run method
+        try
+        {
+            // If method returns false load fallback point
+            if(!Backups::Load($backup_path)) Backups::Load($fallback, false);
+        }
+        catch (Exception $e)
+        {
+            // On error load the fallback point
+            Backups::Load($fallback, false);
+        }
+
+        // Remove fallback point
+        unlink($fallback);
     }
     /**
      * Get all backups in backup folder
@@ -42,11 +61,15 @@ class Backups
      * Loads a backup
      * @param $backup_path Name of the backup to load
      */
-    public static function Load($backup_path)
+    public static function Load($backup_path, $backup_from_backup_folder = true)
     {
         if(!is_file($backup_path)) return false;
-        // Copy the backup
-        if(!copy($backup_path, ".\\backup.zip")) return false;
+        if($backup_from_backup_folder)
+        {
+            // Copy the backup
+            if(!copy($backup_path, ".\\backup.zip")) return false;
+            $backup_path = ".\\backup.zip";
+        }
         
         // First remove the curent database
         SQL::Execute("DROP DATABASE `" . CONFIG['default_database'] . "`;", false);
@@ -58,8 +81,8 @@ class Backups
         if(!is_dir(CONFIG['filesystem'])) mkdir(CONFIG['filesystem']);
 
         // Unzip our filesystem
-        FS::UnZip(".\\backup.zip", CONFIG['filesystem']);
-        //if(!FS::UnZip(".\\backup.zip", CONFIG['filesystem'])) return false;
+        FS::UnZip($backup_path, CONFIG['filesystem']);
+        //if(!FS::UnZip($backup_path, CONFIG['filesystem'])) return false;
 
         // Now Create our database
         SQL::Execute("CREATE DATABASE " .CONFIG['default_database'] . ";", false);

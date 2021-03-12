@@ -18,7 +18,7 @@ Edit the config for your system.
 #### Step4:
 Run the install file.
 ```bash
-cd ?/Pi-Stash/
-php .\_install\install.php
+cd /Pi-Stash/_install/
+php .\install.php
 ```
 This will create the filesystem and database

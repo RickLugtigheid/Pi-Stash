@@ -16,36 +16,40 @@ class FS
             rmdir($dir);
         }
     }
-    public static function Zip($folder_to_zip, $zip_path)
+    public static function Zip($to_zip, $zip_path, $to_zip_name = '')
     {
         // Initialize archive object
         $zip = new ZipArchive();
         $zip->open($zip_path . '.zip', ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
-        // Create recursive directory iterator
-        /** @var SplFileInfo[] $files */
-        $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($folder_to_zip),
-            RecursiveIteratorIterator::LEAVES_ONLY
-        );
-        
-        foreach ($files as $name => $file)
+        if(is_dir($to_zip))
         {
-            // Skip directories (they would be added automatically)
-            if (!$file->isDir())
+            // Create recursive directory iterator
+            /** @var SplFileInfo[] $files */
+            $files = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($to_zip),
+                RecursiveIteratorIterator::LEAVES_ONLY
+            );
+            
+            foreach ($files as $name => $file)
             {
-                // Get real and relative path for current file
-                $filePath = $file->getRealPath();
-                $relativePath = substr($filePath, strlen($folder_to_zip));
+                // Skip directories (they would be added automatically)
+                if (!$file->isDir())
+                {
+                    // Get real and relative path for current file
+                    $filePath = $file->getRealPath();
+                    $relativePath = substr($filePath, strlen($to_zip));
 
-                // Add current file to archive
-                $zip->addFile($filePath, $relativePath);
-            }
-            else if($file->isDir()) {
-                $folder = substr($file->getRealPath(), strlen($folder_to_zip));
-                $zip->addEmptyDir($folder);
+                    // Add current file to archive
+                    $zip->addFile($filePath, $relativePath);
+                }
+                else if($file->isDir()) {
+                    $folder = substr($file->getRealPath(), strlen($to_zip));
+                    $zip->addEmptyDir($folder);
+                }
             }
         }
+        else $zip->addFile($to_zip, $to_zip_name);
 
         // Zip archive will be created only after closing object
         $zip->close();

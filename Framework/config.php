@@ -15,6 +15,7 @@ $config["backup_folder"] = "D:\\Pi-Stash\\SYSTEM\\BACKUPS\\"; // Doesn't has to 
 $config["static_paths"] = ["SYSTEM", "SYSTEM/APPS", "FILES"];
 $config["guest_account"] = true; // A account anyone can use
 $config["max_log_size"] = 32; // Max logfile size in kb
+$config["log_rotate"] = true;
 
 // ----------------------------------
 // SQL DATABASE 
