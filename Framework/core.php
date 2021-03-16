@@ -11,8 +11,9 @@ if(isset(CORE::$request_url)) array_shift(CORE::$request_url);
 
 // Check if we are loged in
 session_start();
+
 // Check if a user is logedin
-if(!isset(CORE::$request_url) && (CORE::$request_url[1] != "login") && !isset($_SESSION["userID"]))
+if(isset(CORE::$request_url) && (CORE::$request_url[1] != "login") && !isset($_SESSION["userID"]))
 {
     // If not we send them to the login page
     $_ENV["CURRENT"] = "home";

@@ -23,7 +23,7 @@
     </ul>
     <div id="grid" id="main">
          <?php foreach($contents as $file) { ?>
-            <div class="file">
+            <div class="file" draggable="true" ondragstart="drag(event)">
                 <?php 
                 // Make sure only admin's can acces system
                 if(($file["name"] == "SYSTEM" || stripos($curent, "SYSTEM") !== false) && !$isAdmin/* $isAdmin for testing */) return; 
@@ -82,7 +82,7 @@
                         <a class="icon" href="/<?=ROOT_DIR?>/filesystem/browse/<?=$curent?>/<?=$file["name"]?>"><i class="fas fa-server"></i></a>
                     <?php break;
                     case null: //dir ?>
-                        <a class="icon" href="/<?=ROOT_DIR?>/filesystem/browse/<?=$curent?>/<?=$file["name"]?>"><i class="far fa-folder"></i></a>
+                        <a class="icon" href="/<?=ROOT_DIR?>/filesystem/browse/<?=$curent?>/<?=$file["name"]?>" ondrop="drop(event)" ondragover="allowDrop(event)"><i class="far fa-folder"></i></a>
                     <?php break;
                     default: ?>
                         <a class="icon" href="/<?=ROOT_DIR?>/filesystem/showfile/<?=$curent?>/<?=$file["name"]?>"><i class="far fa-file"></i></a>
@@ -188,4 +188,29 @@
             }
         });
         uploader.init();
+
+        // Drag and drop scripts
+        function allowDrop(ev) 
+        {
+            ev.preventDefault();
+        }
+
+        function drag(ev) 
+        {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+        // Droped file into folder
+        function drop(ev) 
+        {
+            console.warn(ev);
+            // Get the element/file we are trying to move
+            const data = ev.dataTransfer.getData("text");
+            const file = document.getElementById(data);
+            console.log(file);
+            // Do a POST request on /filesystem/move
+            const Http = new XMLHttpRequest();
+            const url='https://jsonplaceholder.typicode.com/posts';
+            Http.open("GET", url);
+            Http.send();
+        }
 </script>
